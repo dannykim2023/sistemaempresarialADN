@@ -61,6 +61,16 @@ class EmployeeResource extends Resource
                 ])
                 ->nullable(),
 
+            Forms\Components\Select::make('area')
+                ->options([
+                    'Diseño Web' => 'Diseño web',
+                    'Creativos' => 'Creativos',
+                    'Tecnología' => 'Tecnología',
+                    'Administración' => 'Administración',
+                    'Talento Humano' => 'Talento Humano',
+                    'Recursos Humanos' => 'Recursos Humanos',
+                ]),
+
             Forms\Components\Select::make('estado')
                 ->options([
                     'Activo' => 'Activo',
@@ -69,7 +79,49 @@ class EmployeeResource extends Resource
                     'Retirado' => 'Retirado',
                 ])
                 ->default('Activo'),
-                //
+
+                 // ────────── CAMPOS DE CONTRATO ──────────
+                Forms\Components\Select::make('tipo_contrato')
+                    ->label('Tipo de contrato')
+                    ->options([
+                        'Indefinido' => 'Indefinido',
+                        'Plazo fijo' => 'Plazo fijo',
+                        'Servicios' => 'Servicios',
+                        'Prácticas' => 'Prácticas',
+                        'Temporal' => 'Temporal',
+                    ])
+                    ->default('Servicios'),
+
+                Forms\Components\TextInput::make('salario')
+                    ->label('Salario')
+                    ->numeric(),
+                    //->nullable(),
+
+                Forms\Components\Select::make('jornada')
+                    ->label('Jornada')
+                    ->options([
+                        'Tiempo completo' => 'Tiempo completo',
+                        'Medio tiempo' => 'Medio tiempo',
+                        'Por horas' => 'Por horas',
+                    ])
+                    ->default('Tiempo completo'),
+
+                Forms\Components\DatePicker::make('fecha_inicio')
+                    ->label('Fecha de inicio')
+                    ->nullable(),
+
+                Forms\Components\DatePicker::make('fecha_fin')
+                    ->label('Fecha de fin')
+                    ->nullable(),
+
+                // Forms\Components\FileUpload::make('documento_path')
+                //     ->label('Documento del contrato')
+                //     ->directory('contracts')
+                //     ->disk('public')
+                //     ->nullable(),
+
+
+                
             ]);
     }
 
@@ -83,6 +135,39 @@ class EmployeeResource extends Resource
             Tables\Columns\TextColumn::make('telefono'),
             Tables\Columns\TextColumn::make('estado')->badge(),
             Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y H:i'),
+            // ────────── CAMPOS DE CONTRATO ──────────
+            Tables\Columns\TextColumn::make('tipo_contrato')
+                ->label('Tipo de contrato')
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('jornada')
+                ->label('Jornada')
+                ->sortable(),
+                
+            Tables\Columns\TextColumn::make('area')
+                ->label('Area')
+                ->sortable()
+                ->badge(),
+                
+            Tables\Columns\TextColumn::make('salario')
+            ->label('Salario')
+            ->sortable()
+            ->formatStateUsing(fn ($state) => $state !== null ? 'S/'.number_format($state, 2) : '-'),
+
+
+
+            Tables\Columns\TextColumn::make('fecha_inicio')
+                ->label('Inicio')
+                ->date('d/m/Y')
+                ->sortable(),
+
+            Tables\Columns\TextColumn::make('fecha_fin')
+                ->label('Fin')
+                ->date('d/m/Y')
+                ->sortable(),
+
+            // Tables\Columns\TextColumn::make('documento_path') // Comentado por ahora
+            //     ->label('Documento'),
                 
             ])
             ->filters([
