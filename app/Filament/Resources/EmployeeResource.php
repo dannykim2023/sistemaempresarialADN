@@ -186,7 +186,8 @@ class EmployeeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // ✅ Agregar esta línea para relacionar
+            \App\Filament\Resources\EmployeeResource\RelationManagers\CertificadosRelationManager::class,
         ];
     }
 

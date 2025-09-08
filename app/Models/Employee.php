@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
@@ -34,4 +36,13 @@ class Employee extends Model
         'fecha_nacimiento' => 'date',
         'contacto_emergencia' => 'array',
     ];
+
+    // ✅ AGREGAR ESTA RELACIÓN NUEVA
+    public function certificados(): HasMany
+    {
+        return $this->hasMany(Certificado::class);
+    }
+
+    // ... (tus otros métodos existentes)
+
 }
