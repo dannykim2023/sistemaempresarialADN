@@ -1,0 +1,8 @@
+.fi-sidebar-header img {
+    height: 60px !important; /* más grande */
+    max-height: none !important;
+}
+
+.fi-topbar img {
+    height: 50px !important;
+}

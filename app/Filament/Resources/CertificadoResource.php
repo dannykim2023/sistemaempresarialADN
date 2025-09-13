@@ -16,8 +16,8 @@ class CertificadoResource extends Resource
 {
     protected static ?string $model = Certificado::class;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationGroup = 'Gestión';
-    protected static ?string $navigationLabel = 'Certificados Emitidos';
+    protected static ?string $navigationGroup = 'Administración';
+    protected static ?string $navigationLabel = 'Certificados';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -62,10 +62,9 @@ class CertificadoResource extends Resource
                 ->label('Contenido')
                 ->required()
                 ->columnSpanFull()
-                ->default('Por haber acabado sus prácticas satisfactoriamente
-                en un horario de 9 a 1, de lunes a sábado, mostrando dedicación y compromiso
-                en todas las tareas asignadas, se reconoce su esfuerzo y desempeño. Felicitaciones
-                por alcanzar un excelente nivel profesional durante este periodo.'),
+                ->default('Queda constancia de su responsabilidad, compromiso y sobresaliente desempeño en
+          el ámbito preprofesional, evidenciando una actitud proactiva, ética y orientada
+          al aprendizaje continuo.'),
                 
 
 
@@ -92,20 +91,23 @@ class CertificadoResource extends Resource
                     Forms\Components\Textarea::make('datos_adicionales')
                         ->label('Datos Adicionales')
                         ->json()
-                        ->columnSpanFull(),
+                        ->columnSpanFull(),  
 
                     Forms\Components\FileUpload::make('firma_digital_path')
                         ->label('Firma Digital')
                         ->directory('certificados/firmas')
                         ->image()
-                        ->downloadable(),
+                        ->downloadable()
+                        ->default(url('public/firma/firmadaniel.jpg')), // ruta pública de la imagen
+                        
 
                     Forms\Components\FileUpload::make('sello_path')
                         ->label('Sello')
                         ->directory('certificados/sellos')
                         ->image()
-                        ->downloadable(),
-                    */
+                        ->downloadable()
+                        ->default(url('/logo/logo horizontal blanco png.png')),  */
+                   
 
             ]);
     }

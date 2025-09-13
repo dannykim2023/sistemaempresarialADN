@@ -30,6 +30,7 @@ class Employee extends Model
         'created_by',
         'updated_by',
         'area',
+        'puesto',
 ];
 
     protected $casts = [

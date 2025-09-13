@@ -18,6 +18,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -26,10 +28,22 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandLogo(asset('logo/logo agencia dn horizontal.png'))
+            ->favicon(asset('logo/isotipo agencia dn.png'))
             ->login()
+
             ->colors([
-                'primary' => Color::Amber,
-            ])
+            'primary' => '#0f62fe',   // Azul marca
+            'secondary' => '#1f2937', // Gris oscuro elegante
+            'success' => '#16a34a',   // Verde elegante (para estados correctos)
+            'warning' => '#f59e0b',   // Dorado/ámbar elegante
+            'danger' => '#dc2626',    // Rojo elegante (alertas)
+            'info' => '#0ea5e9',      // Azul claro suave
+            'neutral' => '#f3f4f6',   // Gris claro para fondos
+        ])
+
+
+             
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -51,6 +65,8 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+
+           
             ->authMiddleware([
                 Authenticate::class,
             ]);

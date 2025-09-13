@@ -1,370 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>Certificado - {{ $certificado->numero_certificado }}</title>
     <style>
-        @page { margin: 0; }
-        body { 
-            font-family: 'DejaVu Sans', 'Helvetica', sans-serif; 
-            font-size: 12px;
-            line-height: 1.4;
-            color: #2d3748;
+        @page {
+            size: A4 portrait;
+            margin: 1.3cm;
+        }
+
+        body {
+            font-family: "Times New Roman", serif;
+            background: #fff;
             margin: 0;
             padding: 0;
-            background: #f8fafc;
-            position: relative;
-            min-height: 297mm;
         }
-        
-        /* Encabezado */
-        .header {
-            background: #1e40af;
-            color: white;
-            padding: 30px 40px;
+
+        .certificado {
             text-align: center;
-            border-bottom: 5px solid #f59e0b;
+            padding:0px;
         }
-        
-        .logo {
-            width: 100px;
-            height: 100px;
-            background: white;
-            border-radius: 50%;
-            padding: 15px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            color: #3b82f6;
-        }
-        
-        .title {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0 5px 0;
-            text-transform: uppercase;
-        }
-        
-        .subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        /* Contenido principal */
-        .content {
-            padding: 40px;
-        }
-        
-        .certificate-border {
-            border: 3px solid #3b82f6;
-            border-radius: 15px;
-            padding: 40px;
-            background: white;
-            position: relative;
-        }
-        
-        .employee-info {
-            background: #f0f9ff;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #3b82f6;
-            margin: 20px 0;
-        }
-        
-        .employee-info h3 {
-            color: #1e40af;
-            margin-top: 0;
-            font-size: 16px;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .info-item {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .info-label {
-            font-weight: bold;
-            color: #4b5563;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-        
-        .info-value {
-            color: #1f2937;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        
-        .certificate-content {
-            margin: 25px 0;
-            line-height: 1.8;
-            font-size: 13px;
-            text-align: justify;
-        }
-        
-        .signature-section {
-            margin-top: 40px;
-            text-align: right;
-        }
-        
-        .signature-image {
-            width: 150px;
-            height: 60px;
-            margin-bottom: 10px;
-            border: 1px solid #e5e7eb;
-            padding: 5px;
-            background: white;
-        }
-        
-        .signature-line {
-            border-top: 2px solid #3b82f6;
-            width: 250px;
-            margin-left: auto;
-            padding-top: 5px;
-            font-weight: bold;
-            color: #1e40af;
-        }
-        
-        /* Footer */
-        .footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-            padding: 20px;
-            background: #1e293b;
-            color: white;
-            border-top: 3px solid #f59e0b;
-        }
-        
-        .footer-content {
+
+        .encabezado {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 800px;
-            margin: 0 auto;
+            margin-bottom: 40px;
         }
-        
-        .ceo-signature {
+
+        .encabezado img {
+            width: 200px;
+            height: auto;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .subtitulo {
+            font-size: 18px;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .contenido {
+            font-size: 16px;
+            text-align: justify;
+            line-height: 1.8;
+            margin: 0 auto 30px auto;
+        }
+
+        .nombre {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0030ff;
+            margin: 15px 0;
             text-align: center;
         }
-        
-        .ceo-name {
-            font-weight: bold;
+
+        .firma {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .firma img {
+            width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .linea-firma {
+            width: 250px;
+            border-top: 1px solid #000;
+            margin: 0 auto 5px auto;
+        }
+
+        .cargo {
             font-size: 14px;
-            color: #fbbf24;
-            margin-top: 5px;
+            color: #333;
         }
-        
-        .ceo-title {
-            font-size: 11px;
-            opacity: 0.8;
-        }
-        
-        .company-info {
-            text-align: center;
-        }
-        
-        .company-name {
-            font-weight: bold;
+
+        .fecha {
+            margin-top: 40px;
             font-size: 14px;
-            margin-bottom: 5px;
-        }
-        
-        .contact-info {
-            font-size: 11px;
-            opacity: 0.9;
-        }
-        
-        .qr-code {
             text-align: center;
         }
-        
-        .qr-placeholder {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #f59e0b;
-            border-radius: 8px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            color: #fbbf24;
+
+        .footer {
+            margin-top: 60px;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            line-height: 1.6;
         }
-        
-        /* Estados */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .status-active {
-            background: #10b981;
-            color: white;
-        }
-        
-        .status-vencido {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .status-anulado {
-            background: #6b7280;
-            color: white;
-        }
-        
-        /* Marca de agua simplificada */
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 60px;
-            font-weight: bold;
-            color: rgba(59, 130, 246, 0.1);
-            z-index: -1;
-            white-space: nowrap;
+
+        .footer strong {
+            color: #000;
         }
     </style>
 </head>
 <body>
-    <!-- Encabezado -->
-    <div class="header">
-        <div class="logo">📄</div>
-        <h1 class="title">Certificado Oficial</h1>
-        <p class="subtitle">N° {{ $certificado->numero_certificado }}</p>
-    </div>
-
-    <!-- Contenido principal -->
-    <div class="content">
-        <div class="certificate-border">
-            <!-- Marca de agua -->
-            <div class="watermark">CERTIFICADO</div>
-            
-            <!-- Información del certificado -->
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Tipo de Certificado</span>
-                    <span class="info-value">{{ $certificado->tipo_certificado }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Fecha de Emisión</span>
-                    <span class="info-value">{{ $certificado->fecha_emision->format('d/m/Y') }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Título</span>
-                    <span class="info-value">{{ $certificado->titulo }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Estado</span>
-                    <span class="info-value">
-                        <span class="status-badge status-{{ strtolower($certificado->estado) }}">
-                            {{ $certificado->estado }}
-                        </span>
-                    </span>
-                </div>
-                @if($certificado->fecha_vencimiento)
-                <div class="info-item">
-                    <span class="info-label">Fecha de Vencimiento</span>
-                    <span class="info-value">{{ $certificado->fecha_vencimiento->format('d/m/Y') }}</span>
-                </div>
-                @endif
-            </div>
-
-            <!-- Información del empleado -->
-            <div class="employee-info">
-                <h3>📋 DATOS DEL TITULAR</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span class="info-label">Nombre Completo</span>
-                        <span class="info-value">{{ $certificado->employee->nombre }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">DNI</span>
-                        <span class="info-value">{{ $certificado->employee->dni }}</span>
-                    </div>
-                    @if($certificado->employee->email)
-                    <div class="info-item">
-                        <span class="info-label">Email</span>
-                        <span class="info-value">{{ $certificado->employee->email }}</span>
-                    </div>
-                    @endif
-                    @if($certificado->employee->telefono)
-                    <div class="info-item">
-                        <span class="info-label">Teléfono</span>
-                        <span class="info-value">{{ $certificado->employee->telefono }}</span>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Contenido del certificado -->
-            <div class="certificate-content">
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <strong>CONTENIDO DEL CERTIFICADO</strong>
-                </div>
-                {!! $certificado->contenido !!}
-            </div>
-
-            <!-- Sección de firma -->
-            <div class="signature-section">
-                @if($certificado->firma_digital_path)
-                <img src="{{ storage_path('app/public/' . $certificado->firma_digital_path) }}" 
-                     class="signature-image" 
-                     alt="Firma Digital">
-                @else
-                <div style="height: 60px; margin-bottom: 10px;"></div>
-                @endif
-                
-                <div class="signature-line">
-                    FIRMA AUTORIZADA
-                </div>
-                <div style="font-size: 11px; color: #6b7280; margin-top: 5px;">
-                    Fecha de expedición: {{ now()->format('d/m/Y H:i') }}
-                </div>
+    <div class="certificado">
+        <!-- Encabezado -->
+        <div class="encabezado">
+            <img src="{{ public_path('logo/logo vertical agencia dn.png') }}" alt="Logo Institución">
+            <div style="flex:1; text-align:center;">
+                <p><em>AGENCIA DN-SOFTWARE & MARKETING S.A.C.S<br>RUC:20614216493</em></p>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <div class="footer">
-        <div class="footer-content">
-            <div class="ceo-signature">
-                <div>_________________________</div>
-                <div class="ceo-name">DANIEL NÚÑEZ</div>
-                <div class="ceo-title">CEO & FUNDADOR</div>
-            </div>
-            
-            <div class="company-info">
-                <div class="company-name">AGENCIA DN</div>
-                <div class="contact-info">
-                    📧 info@agenciadn.com | 📞 +1 (234) 567-8900
-                </div>
-            </div>
-            
-            <div class="qr-code">
-                <div class="qr-placeholder">
-                    QR<br>CODE
-                </div>
-            </div>
+        <!-- Título -->
+        <div class="titulo">Certificado</div>
+        <div class="subtitulo">Practicas Pre profesionales</div>
+
+        <!-- Contenido -->
+        <div class="contenido">
+            Por medio del presente, se certifica que {{ $certificado->employee->nombre }}
+            identificado con DNI <strong>{{ $certificado->employee->dni }}</strong>,
+            ha realizado satisfactoriamente sus prácticas pre profesionales en nuestra empresa AGENCIA DN-SOFTWARE & MARKETING S.A.C.S 
+            <strong>{{ $certificado->titulo }}</strong>, 
+            en el departamento de <strong>{{ $certificado->employee->area?? 'Área Asignada' }} con el puesto de {{ $certificado->employee->puesto ?? 'Puesto' }}</strong>, 
+            durante el periodo comprendido entre 
+            <strong>{{ $certificado->employee->fecha_inicio}}</strong> y 
+            <strong>{{ $certificado->employee->fecha_fin }}</strong>.  
+            <br><br> {{ $certificado->contenido }}
+          
+        </div>
+
+        <!-- Firma -->
+        <div class="firma">
+            <img src="{{ public_path('firma/firmadaniel.jpg') }}" alt="Firma Daniel">
+            <div class="linea-firma"></div>
+            <div class="cargo">DANIEL LORENZO S.0<br>GERENTE GENERAL & CEO FUNDADOR</div>
+        </div>
+
+        <!-- Fecha -->
+        <div class="fecha">
+            Emitido en Lima Perú, el {{ $certificado->fecha_emision }}.
+        </div>
+
+        <!-- Footer -->
+                Verifica la valides de este certificado en <strong>www.agenciadn.com</strong> <br>
+                ID de Certificado: <strong>{{ $certificado->id}}</strong>
+            </p>
         </div>
     </div>
 </body>

@@ -4,6 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\Filter;
+
+
 use App\Models\Employee;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -19,7 +23,17 @@ class EmployeeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Colaboradores';
-    protected static ?string $navigationGroup = 'Gestión de Personal';
+    protected static ?string $navigationGroup = 'Administración';
+
+    // widget empleados
+    public static function getWidgets(): array
+    {
+        return [
+            \App\Filament\Resources\EmployeeResource\Widgets\EmployeeStatsOverview::class,
+        ];
+    }
+
+
 
     public static function form(Form $form): Form
     {
@@ -33,12 +47,29 @@ class EmployeeResource extends Resource
                 ->columnSpanFull(),
 
             Forms\Components\TextInput::make('nombre')
+                ->label('Nombre y Apellido') 
                 ->required()
                 ->maxLength(200),
 
             Forms\Components\TextInput::make('dni')
                 ->required()
-                ->unique(ignoreRecord: true),
+                ->unique(ignoreRecord: true)
+                ->length(8)
+                ->reactive()
+                ->afterStateUpdated(function ($state, $set) {
+                    if (strlen($state) === 8) {
+                        $api = new \App\Services\ApiDniService();
+                        $data = $api->consultarDni($state);
+
+                        if ($data && isset($data['full_name'])) {
+                            $set('nombre', $data['full_name']); // 👈 Usa el campo correcto
+                        } else {
+                            $set('nombre', null);
+                        }
+                    }
+                }),
+
+
 
             Forms\Components\TextInput::make('email')
                 ->email()
@@ -62,6 +93,8 @@ class EmployeeResource extends Resource
                 ->nullable(),
 
             Forms\Components\Select::make('area')
+                
+                ->label("Departamento")
                 ->options([
                     'Diseño Web' => 'Diseño web',
                     'Creativos' => 'Creativos',
@@ -69,13 +102,43 @@ class EmployeeResource extends Resource
                     'Administración' => 'Administración',
                     'Talento Humano' => 'Talento Humano',
                     'Recursos Humanos' => 'Recursos Humanos',
+                    'Comercial' => 'Comercial',
                 ]),
+
+            Forms\Components\Select::make('puesto')
+                ->label("Puesto")
+                ->options([
+                    // Puestos base
+                    'Diseñador Web' => 'Diseñador Web',
+                    'Desarrollador SEO' => 'Desarrollador SEO',
+                    'Diseñador Gráfico' => 'Diseñador Gráfico',
+                    'Community Manager' => 'Community Manager',
+                    //'Ejecutivo de Ventas' => 'Ejecutivo de Ventas',
+                    'Asistente Administrativo' => 'Asistente Administrativo',
+                    'Contador' => 'Contador',
+                    'Soporte Técnico' => 'Soporte Técnico',
+                    'Reclutamiento y capacitacion' => 'Reclutamiento y capacitacion',
+                    'Atención al Cliente' => 'Atención al Cliente',
+                    'Gerente General' => 'Gerente General',
+                    //'Jefe de Operaciones' => 'Jefe de Operaciones',
+                    //'Marketing Digital' => 'Marketing Digital',
+
+                    // Puestos líderes
+                    'Líder Tecnología' => 'Líder Tecnología',
+                    'Líder Diseño Web' => 'Líder Diseño Web',
+                    'Líder Diseño Gráfico' => 'Líder Diseño Gráfico',
+                    'Líder Creativos' => 'Líder Creativos',
+                    'Líder Ventas' => 'Líder Ventas',
+                    'Líder SEO' => 'Líder SEO',
+                    'Líder Soporte' => 'Líder Soporte',
+                ]),
+
 
             Forms\Components\Select::make('estado')
                 ->options([
                     'Activo' => 'Activo',
                     'Inactivo' => 'Inactivo',
-                    'Licencia' => 'Licencia',
+                    'Permiso' => 'Permiso',
                     'Retirado' => 'Retirado',
                 ])
                 ->default('Activo'),
@@ -84,10 +147,9 @@ class EmployeeResource extends Resource
                 Forms\Components\Select::make('tipo_contrato')
                     ->label('Tipo de contrato')
                     ->options([
-                        'Indefinido' => 'Indefinido',
-                        'Plazo fijo' => 'Plazo fijo',
-                        'Servicios' => 'Servicios',
-                        'Prácticas' => 'Prácticas',
+                        'Practicas profesionales' => 'Practicas profesionales',
+                        'Practicas pre profesionales' => 'Practicas pre profesionales',
+                        'Locador de Servicios' => 'Locador de Servicios',
                         'Temporal' => 'Temporal',
                     ])
                     ->default('Servicios'),
@@ -100,9 +162,11 @@ class EmployeeResource extends Resource
                 Forms\Components\Select::make('jornada')
                     ->label('Jornada')
                     ->options([
+                        'Turno temprano' => 'Turno temprano',
+                        'Turno tarde' => 'Turno tarde',
                         'Tiempo completo' => 'Tiempo completo',
-                        'Medio tiempo' => 'Medio tiempo',
-                        'Por horas' => 'Por horas',
+                        'Sin horario' => 'Sin horario',
+                    
                     ])
                     ->default('Tiempo completo'),
 
@@ -114,11 +178,11 @@ class EmployeeResource extends Resource
                     ->label('Fecha de fin')
                     ->nullable(),
 
-                // Forms\Components\FileUpload::make('documento_path')
-                //     ->label('Documento del contrato')
-                //     ->directory('contracts')
-                //     ->disk('public')
-                //     ->nullable(),
+                Forms\Components\FileUpload::make('documento_path')
+                     ->label('Cv Curriculum')
+                     ->directory('curriculumns')
+                     ->disk('public')
+                     ->nullable(),
 
 
                 
@@ -127,14 +191,19 @@ class EmployeeResource extends Resource
 
     public static function table(Table $table): Table
     {
-            return $table->columns([
+            
+            return $table
+            ->defaultSort('created_at', 'desc') // ordena por últimos añadidos
+            ->columns([
             Tables\Columns\ImageColumn::make('avatar_path')->label('Foto')->circular(),
             Tables\Columns\TextColumn::make('nombre')->searchable()->sortable(),
             Tables\Columns\TextColumn::make('dni'),
-            Tables\Columns\TextColumn::make('email'),
+            Tables\Columns\TextColumn::make('area'),
+            Tables\Columns\TextColumn::make('puesto'),
             Tables\Columns\TextColumn::make('telefono'),
             Tables\Columns\TextColumn::make('estado')->badge(),
-            Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y H:i'),
+            //Tables\Columns\TextColumn::make('created_at')->dateTime('d/m/Y H:i'),
+
             // ────────── CAMPOS DE CONTRATO ──────────
             Tables\Columns\TextColumn::make('tipo_contrato')
                 ->label('Tipo de contrato')
@@ -171,10 +240,33 @@ class EmployeeResource extends Resource
                 
             ])
             ->filters([
-                //
+                // Filtro por estado
+                SelectFilter::make('estado')
+                    ->options([
+                        'Activo' => 'Activo',
+                        'Inactivo' => 'Inactivo',
+                        'Licencia' => 'Licencia',
+                        'Retirado' => 'Retirado',
+                    ]),
+
+                
+                // Filtro que se activa/desactiva (checkbox/toggle)
+                Filter::make('cumple_mes')
+                    ->label('Cumpleaños este mes')
+                    ->toggle() // muestra toggle en la UI (opcional)
+                    ->query(function (Builder $query, array $data = []) : Builder {
+                        // Nota: la query se aplica cuando el filtro se considera activo.
+                        // Como a veces Filament manda ['value' => true] desde URL, usar whereMonth directo.
+                        return $query->whereNotNull('fecha_nacimiento')
+                            ->whereMonth('fecha_nacimiento', now()->month);
+                    }), // 👈 importante: permite activarlo/desactivarlo desde URL
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
