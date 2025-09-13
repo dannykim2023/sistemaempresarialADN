@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Resources\AdminResource\Widgets\LeadersTable;
 
 
 
@@ -28,10 +30,16 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->sidebarCollapsibleOnDesktop()
             ->brandLogo(asset('logo/logo agencia dn horizontal.png'))
             ->favicon(asset('logo/isotipo agencia dn.png'))
+            ->brandLogoHeight('4rem')
             ->login()
-
+            //->sidebarWidth('20rem') 
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+            ])
+            
             ->colors([
             'primary' => '#0f62fe',   // Azul marca
             'secondary' => '#1f2937', // Gris oscuro elegante
@@ -51,6 +59,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                \App\Filament\Widgets\EmployeeStatsOverview::class,
+                \App\Filament\Resources\AdminResource\Widgets\LeadersTable::class,
+
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
@@ -65,10 +76,16 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->plugins([
+                FilamentShieldPlugin::make(),
+            ])
 
            
             ->authMiddleware([
                 Authenticate::class,
             ]);
     }
+
+
+    
 }
